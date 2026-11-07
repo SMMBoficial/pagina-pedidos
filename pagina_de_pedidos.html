@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos • Seguidores & Engajamento</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#080b12;color:#fff}
+header{padding:32px 18px;text-align:center;background:linear-gradient(135deg,#080b12,#10244a)}
+h1{margin:0;font-size:28px;color:#168cff} header p{color:#b8c4d6;margin:10px auto;max-width:600px}
+.container{max-width:850px;margin:auto;padding:18px}
+.notice{background:#101827;border:1px solid #1d365d;padding:14px;border-radius:12px;margin-bottom:18px;color:#dbe8ff}
+section{background:#0d121d;border:1px solid #1a2940;border-radius:14px;padding:18px;margin-bottom:18px}
+h2{margin-top:0;color:#168cff;font-size:20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px}
+button.option{background:#131d2d;color:#fff;border:1px solid #25466f;border-radius:9px;padding:11px 7px;cursor:pointer;font-size:14px}
+button.option:hover,button.option.selected{background:#168cff;border-color:#168cff}
+#cart{position:sticky;bottom:10px;background:#101827;border:1px solid #168cff;border-radius:14px;padding:15px;margin-top:12px}
+#summary{color:#d7e5f8;margin:8px 0 14px;min-height:20px}
+.order{display:block;background:#25d366;color:#07140b;text-align:center;text-decoration:none;font-weight:bold;padding:15px;border-radius:10px}
+footer{text-align:center;color:#74849b;padding:25px}
+.small{font-size:13px;color:#a9b7c8}
+</style>
+</head>
+<body>
+<header>
+<h1>🚀 Faça seu pedido</h1>
+<p>Escolha o serviço e a quantidade. Seu pedido será enviado diretamente para o WhatsApp.</p>
+</header>
+<div class="container">
+<div class="notice">📲 <b>Como pedir:</b> escolha uma opção abaixo e clique em <b>Fazer pedido pelo WhatsApp</b>.</div>
+<div id="services"></div>
+<div id="cart">
+<b>🛒 Seu pedido</b>
+<div id="summary">Nenhum serviço selecionado ainda.</div>
+<a id="order" class="order" href="#">💬 FAZER PEDIDO PELO WHATSAPP</a>
+<div class="small" style="margin-top:10px">Para pedidos acima de 10K, entre em contato pelo PV.</div>
+</div>
+</div>
+<footer>Atendimento pelo WhatsApp • Escolha seu serviço e faça seu pedido</footer>
+<script>
+const whatsapp='5592991729746';
+const amounts=['100','200','300','400','500','600','700','800','900','1K','2K','3K','4K','5K','6K','7K','8K','9K','10K'];
+const services=[
+['Seguidores para Instagram',['3,90','3,90','3,90','3,90','4,32','5,90','6,50','6,90','7,90','8,64','17,28','25,95','34,56','43,02','51,84','60,48','69,12','77,76','86,04']],
+['Curtidas para Instagram',['3,90','3,90','3,90','3,90','3,16','3,90','4,90','5,90','5,90','6,32','12,64','18,96','25,28','31,06','37,92','44,24','50,56','56,88','63,02']],
+['Visualizações em Stories',['3,90','3,90','3,90','4,90','4,90','4,90','4,90','4,90','4,90','4,90','4,90','4,32','5,76','7,02','8,64','10,08','11,52','12,96','14,04']],
+['Seguidores para TikTok',['3,90','3,90','4,11','5,48','6,85','8,22','9,59','10,96','12,33','13,07','27,04','41,01','58,08','68,05','82,02','95,09','109,06','123,03','137,00']],
+['Curtidas para TikTok',['3,90','3,90','3,90','3,90','3,90','3,90','4,90','5,90','5,90','6,38','12,76','19,14','25,52','31,09','38,28','44,66','48,04','57,42','63,08']],
+['Visualizações para TikTok',['3,90','3,90','3,90','3,90','3,90','4,90','4,90','4,90','4,90','4,90','4,72','5,58','7,44','9,03','11,16','13,02','14,88','16,74','18,06']],
+['Seguidores para Kwai',['3,90','3,90','4,90','6,90','4,48','5,90','6,90','7,90','8,90','9,66','19,32','28,98','38,64','48,02','57,96','67,62','77,28','86,74','96,06']],
+['Curtidas para Kwai',['3,90','3,90','3,90','4,90','3,24','4,90','4,90','5,90','5,90','6,48','12,96','19,44','25,92','32,04','38,88','45,36','51,84','58,32','64,08']],
+['Curtidas para Facebook',['3,90','3,90','3,90','4,90','4,90','4,90','4,90','4,90','4,90','4,58','9,16','13,74','18,32','22,02','27,48','32,06','36,64','41,22','45,08']]
+];
+let selected=null;
+const root=document.getElementById('services');
+services.forEach(([name,prices],si)=>{
+ const sec=document.createElement('section'); sec.innerHTML='<h2>'+name+'</h2><div class="grid"></div><p class="small">Acima de 10K: chama no PV.</p>';
+ const grid=sec.querySelector('.grid');
+ amounts.forEach((amount,i)=>{const b=document.createElement('button');b.className='option';b.textContent=amount+' • R$ '+prices[i];b.onclick=()=>select(name,amount,prices[i],b);grid.appendChild(b)});
+ root.appendChild(sec);
+});
+function select(service,amount,price,button){
+ document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');
+ selected={service,amount,price};
+ document.getElementById('summary').innerHTML='<b>'+service+'</b><br>'+amount+' por R$ '+price;
+ const msg='Olá! Quero fazer um pedido:%0A%0A📌 Serviço: '+encodeURIComponent(service)+'%0A📦 Quantidade: '+encodeURIComponent(amount)+'%0A💰 Valor: R$ '+encodeURIComponent(price)+'%0A%0APode me passar as próximas informações?';
+ document.getElementById('order').href='https://wa.me/'+whatsapp+'?text='+msg;
+}
+document.getElementById('order').onclick=e=>{if(!selected){e.preventDefault();alert('Escolha um serviço e uma quantidade primeiro.')}};
+</script>
+</body></html>
